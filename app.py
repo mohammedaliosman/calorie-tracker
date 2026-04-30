@@ -1,0 +1,416 @@
+import streamlit as st
+
+# ============================
+# Food database (calories per 100g)
+# ============================
+foods = {
+    # 🥩 Proteins - Meat
+    "beef (lean)":          {"calories": 250, "state": "cooked"},
+    "turkey breast":        {"calories": 135, "state": "cooked"},
+    "lamb":                 {"calories": 294, "state": "cooked"},
+    "duck":                 {"calories": 337, "state": "cooked"},
+    "beef steak":           {"calories": 271, "state": "cooked"},
+    "lamb liver":           {"calories": 139, "state": "cooked"},
+    "sausage":              {"calories": 301, "state": "cooked"},
+    "smoked turkey":        {"calories": 104, "state": "cooked"},
+
+    # 🐟 Proteins - Fish & Seafood
+    "salmon":               {"calories": 208, "state": "cooked"},
+    "tilapia":              {"calories": 128, "state": "cooked"},
+    "shrimp":               {"calories": 99,  "state": "cooked"},
+    "tuna":                 {"calories": 132, "state": "cooked"},
+
+    # 🥚 Proteins - Other
+    "egg":                  {"calories": 155, "state": "cooked"},
+    "tofu":                 {"calories": 76,  "state": "raw"},
+
+    # 🌾 Grains & Carbs - Raw
+    "rice (raw)":           {"calories": 365, "state": "raw"},
+    "oats (raw)":           {"calories": 389, "state": "raw"},
+    "quinoa (raw)":         {"calories": 368, "state": "raw"},
+    "bulgur (raw)":         {"calories": 342, "state": "raw"},
+    "couscous (raw)":       {"calories": 376, "state": "raw"},
+    "spaghetti (raw)":      {"calories": 371, "state": "raw"},
+    "noodles (raw)":        {"calories": 138, "state": "raw"},
+    "wheat bran":           {"calories": 216, "state": "raw"},
+    "soya":                 {"calories": 446, "state": "raw"},
+
+    # 🌾 Grains & Carbs - Cooked
+    "rice (cooked)":        {"calories": 130, "state": "cooked"},
+    "oats (cooked)":        {"calories": 68,  "state": "cooked"},
+    "quinoa (cooked)":      {"calories": 120, "state": "cooked"},
+    "bulgur (cooked)":      {"calories": 83,  "state": "cooked"},
+    "couscous (cooked)":    {"calories": 112, "state": "cooked"},
+    "spaghetti (cooked)":   {"calories": 158, "state": "cooked"},
+    "jareesh (cooked)":     {"calories": 95,  "state": "cooked"},
+
+    # 🍞 Bread & Bakery
+    "bread (white)":        {"calories": 265, "state": "raw"},
+    "bread (brown)":        {"calories": 247, "state": "raw"},
+    "saj bread":            {"calories": 290, "state": "raw"},
+    "toast (white)":        {"calories": 265, "state": "raw"},
+    "croissant":            {"calories": 406, "state": "raw"},
+    "donut":                {"calories": 452, "state": "raw"},
+    "crackers":             {"calories": 450, "state": "raw"},
+    "chapati":              {"calories": 410, "state": "raw"},
+
+    # 🫘 Legumes - Raw
+    "chickpeas (raw)":      {"calories": 364, "state": "raw"},
+    "lentils (raw)":        {"calories": 353, "state": "raw"},
+    "white beans (raw)":    {"calories": 333, "state": "raw"},
+    "red beans (raw)":      {"calories": 333, "state": "raw"},
+    "lupini beans (raw)":   {"calories": 371, "state": "raw"},
+    "fava beans (raw)":     {"calories": 341, "state": "raw"},
+
+    # 🫘 Legumes - Cooked
+    "chickpeas (cooked)":   {"calories": 164, "state": "cooked"},
+    "lentils (cooked)":     {"calories": 116, "state": "cooked"},
+    "white beans (cooked)": {"calories": 139, "state": "cooked"},
+    "red beans (cooked)":   {"calories": 127, "state": "cooked"},
+    "lupini beans (cooked)":{"calories": 119, "state": "cooked"},
+    "fava beans (cooked)":  {"calories": 110, "state": "cooked"},
+    "mixed legumes":        {"calories": 140, "state": "cooked"},
+    "peas":                 {"calories": 81,  "state": "cooked"},
+    "green beans":          {"calories": 88,  "state": "cooked"},
+
+    # 🥑 Fats & Oils
+    "olive oil":            {"calories": 884, "state": "raw"},
+    "corn oil":             {"calories": 884, "state": "raw"},
+    "butter":               {"calories": 717, "state": "raw"},
+    "ghee":                 {"calories": 900, "state": "raw"},
+    "mayonnaise":           {"calories": 680, "state": "raw"},
+    "tahini":               {"calories": 595, "state": "raw"},
+    "peanut butter":        {"calories": 588, "state": "raw"},
+    "avocado":              {"calories": 160, "state": "raw"},
+
+    # 🥜 Nuts & Seeds
+    "almonds":              {"calories": 579, "state": "raw"},
+    "walnuts":              {"calories": 654, "state": "raw"},
+    "pistachios":           {"calories": 562, "state": "raw"},
+    "cashews":              {"calories": 553, "state": "raw"},
+    "hazelnuts":            {"calories": 628, "state": "raw"},
+    "coconut":              {"calories": 354, "state": "raw"},
+    "sunflower seeds":      {"calories": 584, "state": "raw"},
+    "pumpkin seeds":        {"calories": 559, "state": "raw"},
+    "flaxseeds":            {"calories": 534, "state": "raw"},
+    "chia seeds":           {"calories": 486, "state": "raw"},
+
+    # 🍎 Fruits
+    "apple":                {"calories": 52,  "state": "raw"},
+    "banana":               {"calories": 89,  "state": "raw"},
+    "date":                 {"calories": 277, "state": "raw"},
+    "strawberry":           {"calories": 32,  "state": "raw"},
+    "orange":               {"calories": 47,  "state": "raw"},
+    "grapes":               {"calories": 69,  "state": "raw"},
+    "mango":                {"calories": 60,  "state": "raw"},
+    "watermelon":           {"calories": 30,  "state": "raw"},
+    "blackberry":           {"calories": 43,  "state": "raw"},
+    "blueberry":            {"calories": 57,  "state": "raw"},
+    "cherry":               {"calories": 50,  "state": "raw"},
+    "pear":                 {"calories": 57,  "state": "raw"},
+    "peach":                {"calories": 39,  "state": "raw"},
+    "apricot":              {"calories": 48,  "state": "raw"},
+    "fig":                  {"calories": 74,  "state": "raw"},
+    "dried fig":            {"calories": 249, "state": "raw"},
+    "raisins":              {"calories": 299, "state": "raw"},
+    "pineapple":            {"calories": 50,  "state": "raw"},
+    "kiwi":                 {"calories": 61,  "state": "raw"},
+    "pomegranate":          {"calories": 83,  "state": "raw"},
+    "lemon":                {"calories": 29,  "state": "raw"},
+    "grapefruit":           {"calories": 42,  "state": "raw"},
+
+    # 🥦 Vegetables
+    "broccoli":             {"calories": 34,  "state": "raw"},
+    "cucumber":             {"calories": 15,  "state": "raw"},
+    "tomato":               {"calories": 18,  "state": "raw"},
+    "spinach":              {"calories": 23,  "state": "raw"},
+    "potato (boiled)":      {"calories": 87,  "state": "cooked"},
+    "sweet potato":         {"calories": 86,  "state": "cooked"},
+    "bell pepper":          {"calories": 31,  "state": "raw"},
+    "zucchini":             {"calories": 17,  "state": "raw"},
+    "eggplant":             {"calories": 25,  "state": "raw"},
+    "cauliflower":          {"calories": 25,  "state": "raw"},
+    "cabbage":              {"calories": 25,  "state": "raw"},
+    "lettuce":              {"calories": 15,  "state": "raw"},
+    "arugula":              {"calories": 25,  "state": "raw"},
+    "parsley":              {"calories": 36,  "state": "raw"},
+    "garlic":               {"calories": 149, "state": "raw"},
+    "onion":                {"calories": 40,  "state": "raw"},
+    "carrot":               {"calories": 41,  "state": "raw"},
+    "mushroom":             {"calories": 22,  "state": "raw"},
+    "radish":               {"calories": 16,  "state": "raw"},
+    "turnip":               {"calories": 28,  "state": "raw"},
+    "beetroot":             {"calories": 43,  "state": "raw"},
+    "okra":                 {"calories": 33,  "state": "raw"},
+    "molokhia":             {"calories": 35,  "state": "raw"},
+    "corn":                 {"calories": 86,  "state": "raw"},
+    "black olives":         {"calories": 115, "state": "raw"},
+    "green olives":         {"calories": 145, "state": "raw"},
+
+    # 🥛 Dairy
+    "milk":                 {"calories": 61,  "state": "raw"},
+    "yogurt":               {"calories": 59,  "state": "raw"},
+    "cheese (cheddar)":     {"calories": 403, "state": "raw"},
+    "cheese (feta)":        {"calories": 264, "state": "raw"},
+    "cheese (mozzarella)":  {"calories": 280, "state": "raw"},
+    "cheese (cottage)":     {"calories": 98,  "state": "raw"},
+    "labneh":               {"calories": 154, "state": "raw"},
+    "cream":                {"calories": 245, "state": "raw"},
+    "condensed milk":       {"calories": 322, "state": "raw"},
+    "cooking cream":        {"calories": 195, "state": "raw"},
+    "ice cream (vanilla)":  {"calories": 207, "state": "raw"},
+    "almond milk":          {"calories": 15,  "state": "raw"},
+    "soy milk":             {"calories": 33,  "state": "raw"},
+
+    # 🍫 Sweets & Condiments
+    "honey":                {"calories": 304, "state": "raw"},
+    "white sugar":          {"calories": 387, "state": "raw"},
+    "jam":                  {"calories": 250, "state": "raw"},
+    "date molasses":        {"calories": 290, "state": "raw"},
+    "dark chocolate":       {"calories": 546, "state": "raw"},
+    "cocoa powder":         {"calories": 228, "state": "raw"},
+    "plain cake":           {"calories": 297, "state": "raw"},
+    "ketchup":              {"calories": 112, "state": "raw"},
+    "mustard":              {"calories": 66,  "state": "raw"},
+    "vinegar":              {"calories": 18,  "state": "raw"},
+    "tomato sauce":         {"calories": 82,  "state": "raw"},
+    "chicken stock cube":   {"calories": 198, "state": "raw"},
+    "potato chips":         {"calories": 536, "state": "raw"},
+    "popcorn (no oil)":     {"calories": 387, "state": "raw"},
+}
+
+# ============================
+# إعداد الصفحة
+# ============================
+st.set_page_config(page_title="Calorie Tracker", page_icon="🏋️", layout="wide")
+
+# ============================
+# إخفاء شريط Streamlit العلوي
+# ============================
+hide_streamlit_style = """
+<style>
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    .stDeployButton {display: none;}
+    [data-testid="stToolbar"] {display: none;}
+    [data-testid="stDecoration"] {display: none;}
+    [data-testid="stStatusWidget"] {display: none;}
+</style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+# ============================
+# 🌍 Language Support
+# ============================
+translations = {
+    "en": {
+        "title": "🏋️ Calorie Tracker App",
+        "settings": "⚙️ Settings",
+        "daily_goal": "Daily calorie goal (kcal):",
+        "filter_foods": "🔍 Filter Foods",
+        "show_foods": "Show foods:",
+        "all": "All",
+        "raw_only": "Raw only",
+        "cooked_only": "Cooked only",
+        "add_meal": "🍽️ Add a Meal",
+        "choose_food": "Choose a food:",
+        "amount": "Amount (grams):",
+        "per_100g": "Per 100g",
+        "add_button": "➕ Add Meal",
+        "added_msg": "✅ Added",
+        "today_meals": "📋 Today's Meals",
+        "food": "Food",
+        "grams": "Grams",
+        "calories": "Calories",
+        "state": "State",
+        "raw": "🟤 Raw",
+        "cooked": "🟢 Cooked",
+        "total": "🔥 Total",
+        "goal": "🎯 Goal",
+        "remaining": "✅ Remaining",
+        "exceeded": "⚠️ Exceeded",
+        "clear": "🗑️ Clear All Meals",
+        "no_meals": "No meals added yet. Start by adding a meal above!",
+        "view_foods": "🥗 View All Available Foods",
+        "search": "🔍 Search for a food:",
+        "ai_coming": "🤖 AI Assistant — Coming Soon!",
+    },
+    "ar": {
+        "title": "🏋️ تطبيق تتبع السعرات الحرارية",
+        "settings": "⚙️ الإعدادات",
+        "daily_goal": "هدفك اليومي من السعرات (kcal):",
+        "filter_foods": "🔍 تصفية الأطعمة",
+        "show_foods": "عرض الأطعمة:",
+        "all": "الكل",
+        "raw_only": "نيئة فقط",
+        "cooked_only": "مطبوخة فقط",
+        "add_meal": "🍽️ إضافة وجبة",
+        "choose_food": "اختر طعاماً:",
+        "amount": "الكمية (جرام):",
+        "per_100g": "لكل 100 جرام",
+        "add_button": "➕ إضافة وجبة",
+        "added_msg": "✅ تمت الإضافة",
+        "today_meals": "📋 وجبات اليوم",
+        "food": "الطعام",
+        "grams": "الجرام",
+        "calories": "السعرات",
+        "state": "الحالة",
+        "raw": "🟤 نيئ",
+        "cooked": "🟢 مطبوخ",
+        "total": "🔥 المجموع",
+        "goal": "🎯 الهدف",
+        "remaining": "✅ المتبقي",
+        "exceeded": "⚠️ تجاوزت الهدف",
+        "clear": "🗑️ مسح كل الوجبات",
+        "no_meals": "لم تضف أي وجبات بعد. ابدأ بإضافة وجبة!",
+        "view_foods": "🥗 عرض كل الأطعمة المتاحة",
+        "search": "🔍 ابحث عن طعام:",
+        "ai_coming": "🤖 المساعد الذكي — قريباً!",
+    }
+}
+
+# اختيار اللغة
+lang = st.sidebar.selectbox(
+    "🌍 Language / اللغة",
+    options=["en", "ar"],
+    format_func=lambda x: "English 🇬🇧" if x == "en" else "العربية 🇸🇦"
+)
+t = translations[lang]
+
+# إذا عربي نضيف RTL
+if lang == "ar":
+    st.markdown("""
+    <style>
+        .stApp { direction: rtl; text-align: right; }
+        .stSelectbox, .stNumberInput, .stRadio { direction: rtl; }
+    </style>
+    """, unsafe_allow_html=True)
+
+# ============================
+# العنوان
+# ============================
+st.title(t["title"])
+
+# ============================
+# الشريط الجانبي
+# ============================
+st.sidebar.header(t["settings"])
+daily_goal = st.sidebar.number_input(
+    t["daily_goal"],
+    min_value=500,
+    max_value=5000,
+    value=2000
+)
+
+st.sidebar.markdown("---")
+st.sidebar.header(t["filter_foods"])
+state_filter = st.sidebar.radio(
+    t["show_foods"],
+    [t["all"], t["raw_only"], t["cooked_only"]]
+)
+
+# ============================
+# حفظ الوجبات في الجلسة
+# ============================
+if "meals" not in st.session_state:
+    st.session_state.meals = []
+
+# ============================
+# تصفية الأطعمة
+# ============================
+def filter_foods(filter_type):
+    if filter_type == t["raw_only"]:
+        return {k: v for k, v in foods.items() if v["state"] == "raw"}
+    elif filter_type == t["cooked_only"]:
+        return {k: v for k, v in foods.items() if v["state"] == "cooked"}
+    return foods
+
+filtered_foods = filter_foods(state_filter)
+
+# ============================
+# إضافة وجبة
+# ============================
+st.subheader(t["add_meal"])
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    food = st.selectbox(t["choose_food"], list(filtered_foods.keys()))
+with col2:
+    grams = st.number_input(t["amount"], min_value=1, max_value=2000, value=100)
+with col3:
+    if food:
+        food_info = foods[food]
+        st.metric(
+            label=f"{t['per_100g']} ({food_info['state']})",
+            value=f"{food_info['calories']} kcal"
+        )
+
+if st.button(t["add_button"], use_container_width=True):
+    calories = (foods[food]["calories"] * grams) / 100
+    st.session_state.meals.append({
+        "food": food,
+        "grams": grams,
+        "calories": round(calories, 1),
+        "state": foods[food]["state"]
+    })
+    st.success(f"{t['added_msg']} {food} ({grams}g) — {round(calories, 1)} kcal")
+
+# ============================
+# عرض الوجبات اليومية
+# ============================
+st.subheader(t["today_meals"])
+
+if st.session_state.meals:
+    col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
+    col1.markdown(f"**{t['food']}**")
+    col2.markdown(f"**{t['grams']}**")
+    col3.markdown(f"**{t['calories']}**")
+    col4.markdown(f"**{t['state']}**")
+    st.divider()
+
+    total = 0
+    for meal in st.session_state.meals:
+        col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
+        col1.write(f"🍴 {meal['food']}")
+        col2.write(f"{meal['grams']}g")
+        col3.write(f"{meal['calories']} kcal")
+        col4.write(t["raw"] if meal["state"] == "raw" else t["cooked"])
+        total += meal["calories"]
+
+    st.divider()
+    progress = min(total / daily_goal, 1.0)
+    st.progress(progress)
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric(t["total"], f"{round(total)} kcal")
+    col2.metric(t["goal"], f"{daily_goal} kcal")
+
+    remaining = daily_goal - total
+    if remaining > 0:
+        col3.metric(t["remaining"], f"{round(remaining)} kcal")
+    else:
+        col3.metric(t["exceeded"], f"{round(abs(remaining))} kcal")
+
+    if st.button(t["clear"], use_container_width=True):
+        st.session_state.meals = []
+        st.rerun()
+else:
+    st.info(t["no_meals"])
+
+# ============================
+# جدول الأطعمة المتاحة
+# ============================
+with st.expander(t["view_foods"]):
+    search = st.text_input(t["search"])
+    for food_name, info in foods.items():
+        if search.lower() in food_name.lower():
+            state_icon = "🟤" if info["state"] == "raw" else "🟢"
+            st.write(f"{state_icon} **{food_name}** → {info['calories']} kcal/100g ({info['state']})")
+
+# ============================
+# 🤖 AI Assistant - Coming Soon
+# ============================
+st.divider()
+st.info(t["ai_coming"])
