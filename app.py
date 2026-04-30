@@ -13,18 +13,12 @@ foods = {
     "lamb liver":           {"calories": 139, "state": "cooked"},
     "sausage":              {"calories": 301, "state": "cooked"},
     "smoked turkey":        {"calories": 104, "state": "cooked"},
-
-    # 🐟 Proteins - Fish & Seafood
     "salmon":               {"calories": 208, "state": "cooked"},
     "tilapia":              {"calories": 128, "state": "cooked"},
     "shrimp":               {"calories": 99,  "state": "cooked"},
     "tuna":                 {"calories": 132, "state": "cooked"},
-
-    # 🥚 Proteins - Other
     "egg":                  {"calories": 155, "state": "cooked"},
     "tofu":                 {"calories": 76,  "state": "raw"},
-
-    # 🌾 Grains & Carbs - Raw
     "rice (raw)":           {"calories": 365, "state": "raw"},
     "oats (raw)":           {"calories": 389, "state": "raw"},
     "quinoa (raw)":         {"calories": 368, "state": "raw"},
@@ -34,8 +28,6 @@ foods = {
     "noodles (raw)":        {"calories": 138, "state": "raw"},
     "wheat bran":           {"calories": 216, "state": "raw"},
     "soya":                 {"calories": 446, "state": "raw"},
-
-    # 🌾 Grains & Carbs - Cooked
     "rice (cooked)":        {"calories": 130, "state": "cooked"},
     "oats (cooked)":        {"calories": 68,  "state": "cooked"},
     "quinoa (cooked)":      {"calories": 120, "state": "cooked"},
@@ -43,8 +35,6 @@ foods = {
     "couscous (cooked)":    {"calories": 112, "state": "cooked"},
     "spaghetti (cooked)":   {"calories": 158, "state": "cooked"},
     "jareesh (cooked)":     {"calories": 95,  "state": "cooked"},
-
-    # 🍞 Bread & Bakery
     "bread (white)":        {"calories": 265, "state": "raw"},
     "bread (brown)":        {"calories": 247, "state": "raw"},
     "saj bread":            {"calories": 290, "state": "raw"},
@@ -53,16 +43,12 @@ foods = {
     "donut":                {"calories": 452, "state": "raw"},
     "crackers":             {"calories": 450, "state": "raw"},
     "chapati":              {"calories": 410, "state": "raw"},
-
-    # 🫘 Legumes - Raw
     "chickpeas (raw)":      {"calories": 364, "state": "raw"},
     "lentils (raw)":        {"calories": 353, "state": "raw"},
     "white beans (raw)":    {"calories": 333, "state": "raw"},
     "red beans (raw)":      {"calories": 333, "state": "raw"},
     "lupini beans (raw)":   {"calories": 371, "state": "raw"},
     "fava beans (raw)":     {"calories": 341, "state": "raw"},
-
-    # 🫘 Legumes - Cooked
     "chickpeas (cooked)":   {"calories": 164, "state": "cooked"},
     "lentils (cooked)":     {"calories": 116, "state": "cooked"},
     "white beans (cooked)": {"calories": 139, "state": "cooked"},
@@ -72,8 +58,6 @@ foods = {
     "mixed legumes":        {"calories": 140, "state": "cooked"},
     "peas":                 {"calories": 81,  "state": "cooked"},
     "green beans":          {"calories": 88,  "state": "cooked"},
-
-    # 🥑 Fats & Oils
     "olive oil":            {"calories": 884, "state": "raw"},
     "corn oil":             {"calories": 884, "state": "raw"},
     "butter":               {"calories": 717, "state": "raw"},
@@ -82,8 +66,6 @@ foods = {
     "tahini":               {"calories": 595, "state": "raw"},
     "peanut butter":        {"calories": 588, "state": "raw"},
     "avocado":              {"calories": 160, "state": "raw"},
-
-    # 🥜 Nuts & Seeds
     "almonds":              {"calories": 579, "state": "raw"},
     "walnuts":              {"calories": 654, "state": "raw"},
     "pistachios":           {"calories": 562, "state": "raw"},
@@ -94,8 +76,6 @@ foods = {
     "pumpkin seeds":        {"calories": 559, "state": "raw"},
     "flaxseeds":            {"calories": 534, "state": "raw"},
     "chia seeds":           {"calories": 486, "state": "raw"},
-
-    # 🍎 Fruits
     "apple":                {"calories": 52,  "state": "raw"},
     "banana":               {"calories": 89,  "state": "raw"},
     "date":                 {"calories": 277, "state": "raw"},
@@ -118,8 +98,6 @@ foods = {
     "pomegranate":          {"calories": 83,  "state": "raw"},
     "lemon":                {"calories": 29,  "state": "raw"},
     "grapefruit":           {"calories": 42,  "state": "raw"},
-
-    # 🥦 Vegetables
     "broccoli":             {"calories": 34,  "state": "raw"},
     "cucumber":             {"calories": 15,  "state": "raw"},
     "tomato":               {"calories": 18,  "state": "raw"},
@@ -146,8 +124,6 @@ foods = {
     "corn":                 {"calories": 86,  "state": "raw"},
     "black olives":         {"calories": 115, "state": "raw"},
     "green olives":         {"calories": 145, "state": "raw"},
-
-    # 🥛 Dairy
     "milk":                 {"calories": 61,  "state": "raw"},
     "yogurt":               {"calories": 59,  "state": "raw"},
     "cheese (cheddar)":     {"calories": 403, "state": "raw"},
@@ -161,8 +137,6 @@ foods = {
     "ice cream (vanilla)":  {"calories": 207, "state": "raw"},
     "almond milk":          {"calories": 15,  "state": "raw"},
     "soy milk":             {"calories": 33,  "state": "raw"},
-
-    # 🍫 Sweets & Condiments
     "honey":                {"calories": 304, "state": "raw"},
     "white sugar":          {"calories": 387, "state": "raw"},
     "jam":                  {"calories": 250, "state": "raw"},
@@ -182,13 +156,18 @@ foods = {
 # ============================
 # إعداد الصفحة
 # ============================
-st.set_page_config(page_title="Calorie Tracker", page_icon="🏋️", layout="wide")
+st.set_page_config(
+    page_title="Calorie Tracker",
+    page_icon="🏋️",
+    layout="wide"
+)
 
 # ============================
-# إخفاء شريط Streamlit العلوي
+# CSS التصميم الاحترافي
 # ============================
-hide_streamlit_style = """
+st.markdown("""
 <style>
+    /* إخفاء شريط Streamlit */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
@@ -196,16 +175,151 @@ hide_streamlit_style = """
     [data-testid="stToolbar"] {display: none;}
     [data-testid="stDecoration"] {display: none;}
     [data-testid="stStatusWidget"] {display: none;}
+
+    /* خلفية الصفحة */
+    .stApp {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    }
+
+    /* العنوان الرئيسي */
+    h1 {
+        background: linear-gradient(90deg, #00c9ff, #92fe9d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem !important;
+        font-weight: 800 !important;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    /* العناوين الفرعية */
+    h2, h3 {
+        color: #00c9ff !important;
+        font-weight: 700 !important;
+    }
+
+    /* البطاقات */
+    [data-testid="stMetric"] {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(0, 201, 255, 0.3);
+        border-radius: 15px;
+        padding: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    [data-testid="stMetricValue"] {
+        color: #00c9ff !important;
+        font-size: 1.8rem !important;
+        font-weight: 800 !important;
+    }
+
+    [data-testid="stMetricLabel"] {
+        color: #92fe9d !important;
+        font-weight: 600 !important;
+    }
+
+    /* الأزرار */
+    .stButton > button {
+        background: linear-gradient(90deg, #00c9ff, #92fe9d);
+        color: #0f2027 !important;
+        border: none;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 12px 30px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .stButton > button:hover {
+        transform: scale(1.03);
+        box-shadow: 0 5px 20px rgba(0, 201, 255, 0.4);
+    }
+
+    /* الشريط الجانبي */
+    [data-testid="stSidebar"] {
+        background: rgba(15, 32, 39, 0.95) !important;
+        border-right: 1px solid rgba(0, 201, 255, 0.2);
+    }
+
+    [data-testid="stSidebar"] * {
+        color: #ffffff !important;
+    }
+
+    /* حقول الإدخال */
+    .stSelectbox > div, .stNumberInput > div {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(0, 201, 255, 0.3) !important;
+        border-radius: 10px !important;
+        color: white !important;
+    }
+
+    /* شريط التقدم */
+    .stProgress > div > div {
+        background: linear-gradient(90deg, #00c9ff, #92fe9d) !important;
+        border-radius: 10px;
+    }
+
+    .stProgress > div {
+        background: rgba(255,255,255,0.1) !important;
+        border-radius: 10px;
+    }
+
+    /* رسائل النجاح */
+    .stSuccess {
+        background: rgba(146, 254, 157, 0.15) !important;
+        border: 1px solid #92fe9d !important;
+        border-radius: 10px !important;
+        color: #92fe9d !important;
+    }
+
+    /* رسائل المعلومات */
+    .stInfo {
+        background: rgba(0, 201, 255, 0.1) !important;
+        border: 1px solid #00c9ff !important;
+        border-radius: 10px !important;
+        color: #00c9ff !important;
+    }
+
+    /* النص العام */
+    p, div, span, label {
+        color: #e0e0e0 !important;
+    }
+
+    /* الفاصل */
+    hr {
+        border-color: rgba(0, 201, 255, 0.2) !important;
+    }
+
+    /* expander */
+    .streamlit-expanderHeader {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(0, 201, 255, 0.3) !important;
+        border-radius: 10px !important;
+        color: #00c9ff !important;
+    }
+
+    /* chat */
+    [data-testid="stChatMessage"] {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(0, 201, 255, 0.2) !important;
+        border-radius: 15px !important;
+        margin: 5px 0 !important;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        h1 { font-size: 1.8rem !important; }
+    }
 </style>
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # ============================
 # 🌍 Language Support
 # ============================
 translations = {
     "en": {
-        "title": "🏋️ Calorie Tracker App",
+        "title": "🏋️ Calorie Tracker",
         "settings": "⚙️ Settings",
         "daily_goal": "Daily calorie goal (kcal):",
         "filter_foods": "🔍 Filter Foods",
@@ -237,7 +351,7 @@ translations = {
         "ai_coming": "🤖 AI Assistant — Coming Soon!",
     },
     "ar": {
-        "title": "🏋️ تطبيق تتبع السعرات الحرارية",
+        "title": "🏋️ تتبع السعرات الحرارية",
         "settings": "⚙️ الإعدادات",
         "daily_goal": "هدفك اليومي من السعرات (kcal):",
         "filter_foods": "🔍 تصفية الأطعمة",
@@ -278,7 +392,6 @@ lang = st.sidebar.selectbox(
 )
 t = translations[lang]
 
-# إذا عربي نضيف RTL
 if lang == "ar":
     st.markdown("""
     <style>
@@ -291,6 +404,8 @@ if lang == "ar":
 # العنوان
 # ============================
 st.title(t["title"])
+st.markdown("<p style='text-align:center; color:#92fe9d; font-size:1.1rem;'>Track your daily nutrition with ease 🌿</p>", unsafe_allow_html=True)
+st.divider()
 
 # ============================
 # الشريط الجانبي
@@ -360,6 +475,7 @@ if st.button(t["add_button"], use_container_width=True):
 # ============================
 # عرض الوجبات اليومية
 # ============================
+st.divider()
 st.subheader(t["today_meals"])
 
 if st.session_state.meals:
@@ -393,6 +509,7 @@ if st.session_state.meals:
     else:
         col3.metric(t["exceeded"], f"{round(abs(remaining))} kcal")
 
+    st.divider()
     if st.button(t["clear"], use_container_width=True):
         st.session_state.meals = []
         st.rerun()
@@ -402,6 +519,7 @@ else:
 # ============================
 # جدول الأطعمة المتاحة
 # ============================
+st.divider()
 with st.expander(t["view_foods"]):
     search = st.text_input(t["search"])
     for food_name, info in foods.items():
@@ -410,7 +528,7 @@ with st.expander(t["view_foods"]):
             st.write(f"{state_icon} **{food_name}** → {info['calories']} kcal/100g ({info['state']})")
 
 # ============================
-# 🤖 AI Assistant - Coming Soon
+# AI Coming Soon
 # ============================
 st.divider()
 st.info(t["ai_coming"])
