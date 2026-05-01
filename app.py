@@ -4,17 +4,11 @@ from data import foods
 
 st.set_page_config(page_title="Calorie Tracker", page_icon="🔥", layout="wide")
 
-# --- CSS للتصميم الاحترافي (يدعم الدارك واللايت) ---
+# --- CSS للتصميم الاحترافي ---
 st.markdown("""
 <style>
-    /* تنسيق العناوين والأزرار باللون الأحمر */
     h1, h2, h3 { color: #ff0000 !important; }
     .stButton > button { background-color: #ff0000 !important; color: white !important; border: none; font-weight: bold; }
-
-    /* تنسيق الأرقام والبيانات */
-    [data-testid="stMetricValue"] { color: #ff0000 !important; }
-
-    /* شريط التقدم (تنسيق مخصص) */
     .stProgress > div > div > div { transition: background-color 0.5s ease; }
 </style>
 """, unsafe_allow_html=True)
@@ -53,18 +47,26 @@ if st.button(t["add"]):
     st.session_state.meals.append({"food": food, "calories": round(cal, 1)})
     st.rerun()
 
-# المنطق والتقدم
+# المنطق والتقدم مع الايموجي
 if st.session_state.meals:
     df = pd.DataFrame(st.session_state.meals)
     consumed = df['calories'].sum()
     remaining = max(0, daily_goal - consumed)
     progress_pct = min(consumed / daily_goal, 1.0)
 
-    # اختيار لون الشريط حسب النسبة
-    color = "green" if progress_pct < 0.5 else "orange" if progress_pct < 0.8 else "red"
+    # تحديد الايموجي واللون حسب التقدم
+    if progress_pct < 0.4:
+        emoji, color = "🏋️", "green"
+    elif progress_pct < 0.8:
+        emoji, color = "🔥", "orange"
+    elif progress_pct < 1.0:
+        emoji, color = "🚀", "red"
+    else:
+        emoji, color = "🏆", "red"
 
-    # عرض التقدم
-    st.write(f"**{t['consumed']}:** {consumed} | **{t['remaining']}:** {remaining}")
+    # عرض التقدم مع الايموجي
+    st.write(f"### {emoji} {t['consumed']}: {consumed} | {t['remaining']}: {remaining}")
+
     st.markdown(f"""
         <style>
             .stProgress > div > div > div {{ background-color: {color} !important; }}
