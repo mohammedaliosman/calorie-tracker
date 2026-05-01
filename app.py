@@ -167,7 +167,6 @@ st.set_page_config(
 # ============================
 st.markdown("""
 <style>
-    /* إخفاء شريط Streamlit */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
@@ -176,12 +175,10 @@ st.markdown("""
     [data-testid="stDecoration"] {display: none;}
     [data-testid="stStatusWidget"] {display: none;}
 
-    /* خلفية الصفحة */
     .stApp {
         background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     }
 
-    /* العنوان الرئيسي */
     h1 {
         background: linear-gradient(90deg, #00c9ff, #92fe9d);
         -webkit-background-clip: text;
@@ -192,13 +189,11 @@ st.markdown("""
         padding: 20px 0;
     }
 
-    /* العناوين الفرعية */
     h2, h3 {
         color: #00c9ff !important;
         font-weight: 700 !important;
     }
 
-    /* البطاقات */
     [data-testid="stMetric"] {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(0, 201, 255, 0.3);
@@ -218,7 +213,6 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* الأزرار */
     .stButton > button {
         background: linear-gradient(90deg, #00c9ff, #92fe9d);
         color: #0f2027 !important;
@@ -236,7 +230,6 @@ st.markdown("""
         box-shadow: 0 5px 20px rgba(0, 201, 255, 0.4);
     }
 
-    /* الشريط الجانبي */
     [data-testid="stSidebar"] {
         background: rgba(15, 32, 39, 0.95) !important;
         border-right: 1px solid rgba(0, 201, 255, 0.2);
@@ -246,7 +239,6 @@ st.markdown("""
         color: #ffffff !important;
     }
 
-    /* حقول الإدخال */
     .stSelectbox > div, .stNumberInput > div {
         background: rgba(255, 255, 255, 0.05) !important;
         border: 1px solid rgba(0, 201, 255, 0.3) !important;
@@ -254,7 +246,6 @@ st.markdown("""
         color: white !important;
     }
 
-    /* شريط التقدم */
     .stProgress > div > div {
         background: linear-gradient(90deg, #00c9ff, #92fe9d) !important;
         border-radius: 10px;
@@ -265,7 +256,6 @@ st.markdown("""
         border-radius: 10px;
     }
 
-    /* رسائل النجاح */
     .stSuccess {
         background: rgba(146, 254, 157, 0.15) !important;
         border: 1px solid #92fe9d !important;
@@ -273,7 +263,6 @@ st.markdown("""
         color: #92fe9d !important;
     }
 
-    /* رسائل المعلومات */
     .stInfo {
         background: rgba(0, 201, 255, 0.1) !important;
         border: 1px solid #00c9ff !important;
@@ -281,17 +270,14 @@ st.markdown("""
         color: #00c9ff !important;
     }
 
-    /* النص العام */
     p, div, span, label {
         color: #e0e0e0 !important;
     }
 
-    /* الفاصل */
     hr {
         border-color: rgba(0, 201, 255, 0.2) !important;
     }
 
-    /* expander */
     .streamlit-expanderHeader {
         background: rgba(255,255,255,0.05) !important;
         border: 1px solid rgba(0, 201, 255, 0.3) !important;
@@ -299,15 +285,6 @@ st.markdown("""
         color: #00c9ff !important;
     }
 
-    /* chat */
-    [data-testid="stChatMessage"] {
-        background: rgba(255,255,255,0.05) !important;
-        border: 1px solid rgba(0, 201, 255, 0.2) !important;
-        border-radius: 15px !important;
-        margin: 5px 0 !important;
-    }
-
-    /* Mobile responsive */
     @media (max-width: 768px) {
         h1 { font-size: 1.8rem !important; }
     }
@@ -384,9 +361,12 @@ translations = {
     }
 }
 
-# اختيار اللغة
+# ============================
+# اختيار اللغة - أول شيء في الشريط الجانبي
+# ============================
+st.sidebar.markdown("## 🌍 Language / اللغة")
 lang = st.sidebar.selectbox(
-    "🌍 Language / اللغة",
+    "",
     options=["en", "ar"],
     format_func=lambda x: "English 🇬🇧" if x == "en" else "العربية 🇸🇦"
 )
@@ -400,16 +380,7 @@ if lang == "ar":
     </style>
     """, unsafe_allow_html=True)
 
-# ============================
-# العنوان
-# ============================
-st.title(t["title"])
-st.markdown("<p style='text-align:center; color:#92fe9d; font-size:1.1rem;'>Track your daily nutrition with ease 🌿</p>", unsafe_allow_html=True)
-st.divider()
-
-# ============================
-# الشريط الجانبي
-# ============================
+st.sidebar.markdown("---")
 st.sidebar.header(t["settings"])
 daily_goal = st.sidebar.number_input(
     t["daily_goal"],
@@ -424,6 +395,16 @@ state_filter = st.sidebar.radio(
     t["show_foods"],
     [t["all"], t["raw_only"], t["cooked_only"]]
 )
+
+# ============================
+# العنوان
+# ============================
+st.title(t["title"])
+st.markdown(
+    "<p style='text-align:center; color:#92fe9d; font-size:1.1rem;'>Track your daily nutrition with ease 🌿</p>",
+    unsafe_allow_html=True
+)
+st.divider()
 
 # ============================
 # حفظ الوجبات في الجلسة
