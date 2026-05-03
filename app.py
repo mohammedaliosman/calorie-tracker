@@ -38,42 +38,34 @@ st.markdown("""
 
     /* ===== إصلاح الجوال ===== */
     @media (max-width: 768px) {
-
         [data-testid="stSidebar"] {
             display: none !important;
         }
-
         .main .block-container {
             padding-left: 1rem !important;
             padding-right: 1rem !important;
             max-width: 100% !important;
         }
-
         h1 {
             font-size: 1.6rem !important;
             text-align: center;
         }
-
         [data-testid="column"] {
             width: 100% !important;
             flex: 100% !important;
             min-width: 100% !important;
         }
-
         .stButton > button {
             font-size: 1rem !important;
             padding: 12px !important;
         }
-
         .stSelectbox, .stNumberInput {
             font-size: 1rem !important;
         }
-
         table {
             font-size: 0.85rem !important;
             width: 100% !important;
         }
-
         .streak-card {
             font-size: 1rem !important;
             padding: 12px !important;
@@ -137,19 +129,25 @@ if "daily_goal" not in st.session_state:
 # ============================
 # الشريط الجانبي - للكمبيوتر
 # ============================
-st.sidebar.selectbox(
+sidebar_lang = st.sidebar.selectbox(
     "🌐 Language / اللغة",
     options=["en", "ar"],
     format_func=lambda x: "English" if x == "en" else "العربية",
-    key="lang"
+    index=0 if st.session_state.lang == "en" else 1
 )
-st.sidebar.number_input(
+if sidebar_lang != st.session_state.lang:
+    st.session_state.lang = sidebar_lang
+    st.rerun()
+
+sidebar_goal = st.sidebar.number_input(
     "Daily Goal / الهدف اليومي",
     min_value=500,
-    value=2000,
-    step=100,
-    key="daily_goal"
+    value=st.session_state.daily_goal,
+    step=100
 )
+if sidebar_goal != st.session_state.daily_goal:
+    st.session_state.daily_goal = sidebar_goal
+    st.rerun()
 
 # قراءة القيم
 lang = st.session_state.lang
@@ -169,7 +167,7 @@ if lang == "ar":
 st.title(f"🔥 {t['title']}")
 
 # ============================
-# إعدادات الجوال - تظهر بدل الشريط الجانبي
+# إعدادات الجوال
 # ============================
 with st.expander(t["settings"]):
     col1, col2 = st.columns(2)
@@ -178,8 +176,7 @@ with st.expander(t["settings"]):
             t["language"],
             options=["en", "ar"],
             format_func=lambda x: "English" if x == "en" else "العربية",
-            index=0 if lang == "en" else 1,
-            key="mobile_lang"
+            index=0 if lang == "en" else 1
         )
         if mobile_lang != lang:
             st.session_state.lang = mobile_lang
@@ -189,8 +186,7 @@ with st.expander(t["settings"]):
             t["goal"],
             min_value=500,
             value=daily_goal,
-            step=100,
-            key="mobile_goal"
+            step=100
         )
         if mobile_goal != daily_goal:
             st.session_state.daily_goal = mobile_goal
