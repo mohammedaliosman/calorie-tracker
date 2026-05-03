@@ -15,6 +15,18 @@ st.markdown("""
     [data-testid="stDecoration"] {display: none;}
     [data-testid="stStatusWidget"] {display: none;}
 
+    /* إخفاء الشريط الجانبي على كل الأجهزة */
+    [data-testid="stSidebar"] {
+        display: none !important;
+    }
+
+    /* إزالة المسافة الفارغة */
+    .main .block-container {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+        max-width: 100% !important;
+    }
+
     h1, h2, h3 { color: #ff0000 !important; }
     .stButton > button {
         background-color: #ff0000 !important;
@@ -38,13 +50,9 @@ st.markdown("""
 
     /* ===== إصلاح الجوال ===== */
     @media (max-width: 768px) {
-        [data-testid="stSidebar"] {
-            display: none !important;
-        }
         .main .block-container {
             padding-left: 1rem !important;
             padding-right: 1rem !important;
-            max-width: 100% !important;
         }
         h1 {
             font-size: 1.6rem !important;
@@ -126,29 +134,6 @@ if "lang" not in st.session_state:
 if "daily_goal" not in st.session_state:
     st.session_state.daily_goal = 2000
 
-# ============================
-# الشريط الجانبي - للكمبيوتر
-# ============================
-sidebar_lang = st.sidebar.selectbox(
-    "🌐 Language / اللغة",
-    options=["en", "ar"],
-    format_func=lambda x: "English" if x == "en" else "العربية",
-    index=0 if st.session_state.lang == "en" else 1
-)
-if sidebar_lang != st.session_state.lang:
-    st.session_state.lang = sidebar_lang
-    st.rerun()
-
-sidebar_goal = st.sidebar.number_input(
-    "Daily Goal / الهدف اليومي",
-    min_value=500,
-    value=st.session_state.daily_goal,
-    step=100
-)
-if sidebar_goal != st.session_state.daily_goal:
-    st.session_state.daily_goal = sidebar_goal
-    st.rerun()
-
 # قراءة القيم
 lang = st.session_state.lang
 daily_goal = st.session_state.daily_goal
@@ -167,7 +152,7 @@ if lang == "ar":
 st.title(f"🔥 {t['title']}")
 
 # ============================
-# إعدادات الجوال
+# الإعدادات في المنتصف
 # ============================
 with st.expander(t["settings"]):
     col1, col2 = st.columns(2)
