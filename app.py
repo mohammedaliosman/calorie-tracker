@@ -140,16 +140,12 @@ translations = {
 # ============================
 if "meals" not in st.session_state:
     st.session_state.meals = []
-
 if "goal_counted" not in st.session_state:
     st.session_state.goal_counted = False
-
 if "lang" not in st.session_state:
     st.session_state.lang = "en"
-
 if "daily_goal" not in st.session_state:
     st.session_state.daily_goal = 2000
-
 if "streak" not in st.session_state:
     data = load_streak()
     st.session_state.streak = data["streak"]
@@ -212,13 +208,25 @@ st.markdown(f"""
 # ============================
 col1, col2 = st.columns(2)
 with col1:
-    food = st.selectbox(t["choose"], list(foods.keys()))
+    food_keys = list(foods.keys())
+    food_display = [foods[k]["ar"] if lang == "ar" else k for k in food_keys]
+    food_index = st.selectbox(
+        t["choose"],
+        range(len(food_keys)),
+        format_func=lambda i: food_display[i]
+    )
+    food = food_keys[food_index]
+
 with col2:
     grams = st.number_input(t["amount"], min_value=1, value=100)
 
 if st.button(t["add"]):
     cal = (foods[food]["calories"] * grams) / 100
-    st.session_state.meals.append({"food": food, "calories": round(cal, 1)})
+    food_name = foods[food]["ar"] if lang == "ar" else food
+    st.session_state.meals.append({
+        "food": food_name,
+        "calories": round(cal, 1)
+    })
     st.rerun()
 
 # ============================
