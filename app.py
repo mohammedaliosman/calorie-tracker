@@ -4,7 +4,7 @@ from data import foods
 
 st.set_page_config(page_title="Calorie Tracker", page_icon="🔥", layout="wide")
 
-# --- إخفاء شريط GitHub وStreamlit ---
+# --- CSS ---
 st.markdown("""
 <style>
     #MainMenu {visibility: hidden;}
@@ -14,16 +14,6 @@ st.markdown("""
     [data-testid="stToolbar"] {display: none;}
     [data-testid="stDecoration"] {display: none;}
     [data-testid="stStatusWidget"] {display: none;}
-
-    /* تحسين الجوال */
-    @media (max-width: 768px) {
-        h1 { font-size: 1.5rem !important; }
-        h2, h3 { font-size: 1.2rem !important; }
-        .stButton > button { font-size: 0.9rem !important; padding: 8px !important; }
-        [data-testid="stSidebar"] { min-width: 80% !important; }
-        .stSelectbox, .stNumberInput { font-size: 0.9rem !important; }
-        table { font-size: 0.8rem !important; }
-    }
 
     h1, h2, h3 { color: #ff0000 !important; }
     .stButton > button {
@@ -35,7 +25,6 @@ st.markdown("""
     }
     .stProgress > div > div > div { transition: background-color 0.5s ease; }
 
-    /* بطاقة العداد */
     .streak-card {
         background: linear-gradient(135deg, #ff0000, #ff6b6b);
         border-radius: 15px;
@@ -46,14 +35,59 @@ st.markdown("""
         font-weight: bold;
         margin: 10px 0;
     }
+
+    /* ===== إصلاح الجوال ===== */
+    @media (max-width: 768px) {
+
+        [data-testid="stSidebar"] {
+            display: none !important;
+        }
+
+        .main .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            max-width: 100% !important;
+        }
+
+        h1 {
+            font-size: 1.6rem !important;
+            text-align: center;
+        }
+
+        [data-testid="column"] {
+            width: 100% !important;
+            flex: 100% !important;
+            min-width: 100% !important;
+        }
+
+        .stButton > button {
+            font-size: 1rem !important;
+            padding: 12px !important;
+        }
+
+        .stSelectbox, .stNumberInput {
+            font-size: 1rem !important;
+        }
+
+        table {
+            font-size: 0.85rem !important;
+            width: 100% !important;
+        }
+
+        .streak-card {
+            font-size: 1rem !important;
+            padding: 12px !important;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
+# ============================
 # الترجمة
+# ============================
 translations = {
     "en": {
         "title": "Calorie Tracker",
-        "lang": "Language",
         "goal": "Daily Goal (cal)",
         "choose": "Food:",
         "amount": "Amount (g):",
@@ -62,13 +96,14 @@ translations = {
         "remaining": "Remaining",
         "consumed": "Consumed",
         "clear": "Clear All",
-        "streak": "🏆 Days Goal Completed",
+        "streak": "Days Goal Completed",
         "goal_done": "✅ Goal completed today! +1 day added!",
         "goal_not_done": "Keep going to complete today's goal!",
+        "settings": "⚙️ Settings",
+        "language": "🌐 Language",
     },
     "ar": {
         "title": "متتبع السعرات",
-        "lang": "اللغة",
         "goal": "الهدف اليومي (سعرة)",
         "choose": "الطعام:",
         "amount": "الكمية (جرام):",
@@ -77,20 +112,49 @@ translations = {
         "remaining": "المتبقي",
         "consumed": "المستهلك",
         "clear": "مسح الكل",
-        "streak": "🏆 أيام أكملت الهدف",
+        "streak": "أيام أكملت الهدف",
         "goal_done": "✅ أكملت هدفك اليوم! +1 يوم!",
         "goal_not_done": "استمر لإكمال هدف اليوم!",
+        "settings": "⚙️ الإعدادات",
+        "language": "🌐 اللغة",
     }
 }
 
-# الشريط الجانبي
-lang = st.sidebar.selectbox(
+# ============================
+# تهيئة session_state
+# ============================
+if "meals" not in st.session_state:
+    st.session_state.meals = []
+if "streak" not in st.session_state:
+    st.session_state.streak = 0
+if "goal_counted" not in st.session_state:
+    st.session_state.goal_counted = False
+if "lang" not in st.session_state:
+    st.session_state.lang = "en"
+if "daily_goal" not in st.session_state:
+    st.session_state.daily_goal = 2000
+
+# ============================
+# الشريط الجانبي - للكمبيوتر
+# ============================
+st.sidebar.selectbox(
     "🌐 Language / اللغة",
     options=["en", "ar"],
-    format_func=lambda x: "English" if x == "en" else "العربية"
+    format_func=lambda x: "English" if x == "en" else "العربية",
+    key="lang"
 )
+st.sidebar.number_input(
+    "Daily Goal / الهدف اليومي",
+    min_value=500,
+    value=2000,
+    step=100,
+    key="daily_goal"
+)
+
+# قراءة القيم
+lang = st.session_state.lang
+daily_goal = st.session_state.daily_goal
 t = translations[lang]
-daily_goal = st.sidebar.number_input(t["goal"], min_value=500, value=2000, step=100)
 
 if lang == "ar":
     st.markdown("""
@@ -99,19 +163,38 @@ if lang == "ar":
     </style>
     """, unsafe_allow_html=True)
 
+# ============================
+# العنوان
+# ============================
 st.title(f"🔥 {t['title']}")
 
 # ============================
-# تهيئة session_state
+# إعدادات الجوال - تظهر بدل الشريط الجانبي
 # ============================
-if "meals" not in st.session_state:
-    st.session_state.meals = []
-
-if "streak" not in st.session_state:
-    st.session_state.streak = 0
-
-if "goal_counted" not in st.session_state:
-    st.session_state.goal_counted = False
+with st.expander(t["settings"]):
+    col1, col2 = st.columns(2)
+    with col1:
+        mobile_lang = st.selectbox(
+            t["language"],
+            options=["en", "ar"],
+            format_func=lambda x: "English" if x == "en" else "العربية",
+            index=0 if lang == "en" else 1,
+            key="mobile_lang"
+        )
+        if mobile_lang != lang:
+            st.session_state.lang = mobile_lang
+            st.rerun()
+    with col2:
+        mobile_goal = st.number_input(
+            t["goal"],
+            min_value=500,
+            value=daily_goal,
+            step=100,
+            key="mobile_goal"
+        )
+        if mobile_goal != daily_goal:
+            st.session_state.daily_goal = mobile_goal
+            st.rerun()
 
 # ============================
 # عداد الأيام
@@ -145,7 +228,6 @@ if st.session_state.meals:
     remaining = max(0, daily_goal - consumed)
     progress_pct = min(consumed / daily_goal, 1.0)
 
-    # تحديد الإيموجي واللون
     if progress_pct < 0.4:
         emoji, color = "🏋️", "green"
     elif progress_pct < 0.8:
@@ -164,9 +246,6 @@ if st.session_state.meals:
     """, unsafe_allow_html=True)
     st.progress(progress_pct)
 
-    # ============================
-    # عداد الأيام - يضيف يوم عند إكمال الهدف
-    # ============================
     if progress_pct >= 1.0 and not st.session_state.goal_counted:
         st.session_state.streak += 1
         st.session_state.goal_counted = True
