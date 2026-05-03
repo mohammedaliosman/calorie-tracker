@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import json
+import os
+from datetime import date
 from data import foods
 
 st.set_page_config(page_title="Calorie Tracker", page_icon="🔥", layout="wide")
@@ -15,12 +18,10 @@ st.markdown("""
     [data-testid="stDecoration"] {display: none;}
     [data-testid="stStatusWidget"] {display: none;}
 
-    /* إخفاء الشريط الجانبي على كل الأجهزة */
     [data-testid="stSidebar"] {
         display: none !important;
     }
 
-    /* إزالة المسافة الفارغة */
     .main .block-container {
         padding-left: 2rem !important;
         padding-right: 2rem !important;
@@ -48,7 +49,6 @@ st.markdown("""
         margin: 10px 0;
     }
 
-    /* ===== إصلاح الجوال ===== */
     @media (max-width: 768px) {
         .main .block-container {
             padding-left: 1rem !important;
@@ -81,6 +81,21 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+# ============================
+# حفظ وتحميل العداد
+# ============================
+SAVE_FILE = "streak_data.json"
+
+def load_streak():
+    if os.path.exists(SAVE_FILE):
+        with open(SAVE_FILE, "r") as f:
+            return json.load(f)
+    return {"streak": 0, "last_date": ""}
+
+def save_streak(streak, last_date):
+    with open(SAVE_FILE, "w") as f:
+        json.dump({"streak": streak, "last_date": last_date}, f)
 
 # ============================
 # الترجمة
@@ -125,14 +140,20 @@ translations = {
 # ============================
 if "meals" not in st.session_state:
     st.session_state.meals = []
-if "streak" not in st.session_state:
-    st.session_state.streak = 0
+
 if "goal_counted" not in st.session_state:
     st.session_state.goal_counted = False
+
 if "lang" not in st.session_state:
     st.session_state.lang = "en"
+
 if "daily_goal" not in st.session_state:
     st.session_state.daily_goal = 2000
+
+if "streak" not in st.session_state:
+    data = load_streak()
+    st.session_state.streak = data["streak"]
+    st.session_state.last_date = data["last_date"]
 
 # قراءة القيم
 lang = st.session_state.lang
@@ -152,7 +173,7 @@ if lang == "ar":
 st.title(f"🔥 {t['title']}")
 
 # ============================
-# الإعدادات في المنتصف
+# الإعدادات
 # ============================
 with st.expander(t["settings"]):
     col1, col2 = st.columns(2)
@@ -227,9 +248,14 @@ if st.session_state.meals:
     """, unsafe_allow_html=True)
     st.progress(progress_pct)
 
-    if progress_pct >= 1.0 and not st.session_state.goal_counted:
+    # ============================
+    # عداد الأيام - حفظ دائم
+    # ============================
+    today = str(date.today())
+    if progress_pct >= 1.0 and st.session_state.last_date != today:
         st.session_state.streak += 1
-        st.session_state.goal_counted = True
+        st.session_state.last_date = today
+        save_streak(st.session_state.streak, today)
         st.success(t["goal_done"])
     elif progress_pct < 1.0:
         st.info(t["goal_not_done"])
