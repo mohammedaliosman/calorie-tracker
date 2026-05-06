@@ -9,15 +9,34 @@ foods = {
     "lamb liver":            {"calories": 139, "state": "cooked", "ar": "كبدة ضأن"},
     "sausage":               {"calories": 301, "state": "cooked", "ar": "سجق"},
     "smoked turkey":         {"calories": 104, "state": "cooked", "ar": "تركي مدخن"},
+
+    # 🐔 Chicken
+    "chicken breast (cooked)":   {"calories": 165, "state": "cooked", "ar": "صدور دجاج (مسلوقة)"},
+    "chicken thighs (no skin)":  {"calories": 209, "state": "cooked", "ar": "أفخاذ دجاج (بدون جلد)"},
+    "chicken thighs (with skin)":{"calories": 240, "state": "cooked", "ar": "أفخاذ دجاج (بالجلد)"},
+    "chicken wings":             {"calories": 290, "state": "cooked", "ar": "أجنحة دجاج"},
+    "chicken drumstick":         {"calories": 172, "state": "cooked", "ar": "دبابيس دجاج"},
+    "chicken liver":             {"calories": 167, "state": "cooked", "ar": "كبدة دجاج"},
+    "chicken gizzard":           {"calories": 154, "state": "cooked", "ar": "قوانص دجاج"},
+    "chicken hearts":            {"calories": 153, "state": "cooked", "ar": "قلوب دجاج"},
+    "chicken skin":              {"calories": 450, "state": "cooked", "ar": "جلد دجاج"},
+    "chicken mince (breast)":    {"calories": 143, "state": "cooked", "ar": "دجاج مفروم"},
+    "quail":                     {"calories": 134, "state": "cooked", "ar": "سمان"},
+
+    # 🐟 Proteins - Fish & Seafood
     "salmon":                {"calories": 208, "state": "cooked", "ar": "سلمون"},
     "tilapia":               {"calories": 128, "state": "cooked", "ar": "سمك بلطي"},
     "shrimp":                {"calories": 99,  "state": "cooked", "ar": "روبيان"},
     "tuna":                  {"calories": 132, "state": "cooked", "ar": "تونة"},
+
+    # 🥚 Proteins - Other
     "egg":                   {"calories": 155, "state": "cooked", "ar": "بيض"},
     "tofu":                  {"calories": 76,  "state": "raw",    "ar": "توفو"},
 
     # 🌾 Grains - Raw
     "rice (raw)":            {"calories": 365, "state": "raw",    "ar": "أرز (نيئ)"},
+    "oats (whole)":          {"calories": 389, "state": "raw",    "ar": "شوفان (كامل)"},
+    "oats (quick)":          {"calories": 370, "state": "raw",    "ar": "شوفان (سريع التحضير)"},
     "oats (raw)":            {"calories": 389, "state": "raw",    "ar": "شوفان (نيئ)"},
     "quinoa (raw)":          {"calories": 368, "state": "raw",    "ar": "كينوا (نيئة)"},
     "bulgur (raw)":          {"calories": 342, "state": "raw",    "ar": "برغل (نيئ)"},
@@ -26,15 +45,38 @@ foods = {
     "noodles (raw)":         {"calories": 138, "state": "raw",    "ar": "نودلز (نيئة)"},
     "wheat bran":            {"calories": 216, "state": "raw",    "ar": "نخالة قمح"},
     "soya":                  {"calories": 446, "state": "raw",    "ar": "صويا"},
+    "whole wheat (grain)":   {"calories": 327, "state": "raw",    "ar": "قمح (حبوب كاملة)"},
+    "corn (yellow)":         {"calories": 86,  "state": "raw",    "ar": "ذرة صفراء"},
+    "dried peas":            {"calories": 341, "state": "raw",    "ar": "بازلاء مجففة"},
+    "millet":                {"calories": 378, "state": "raw",    "ar": "دخن"},
+    "sorghum":               {"calories": 339, "state": "raw",    "ar": "ذرة بيضاء"},
+    "rice bran":             {"calories": 400, "state": "raw",    "ar": "نخالة الأرز"},
+    "soy powder":            {"calories": 350, "state": "raw",    "ar": "مسحوق الصويا"},
+    "cornmeal":              {"calories": 362, "state": "raw",    "ar": "دقيق الذرة"},
+    "wheat germ":            {"calories": 360, "state": "raw",    "ar": "جنين القمح"},
+    "rye":                   {"calories": 338, "state": "raw",    "ar": "شيلم"},
+    "buckwheat (raw)":       {"calories": 343, "state": "raw",    "ar": "حنطة سوداء (نيئة)"},
+    "spelt":                 {"calories": 127, "state": "raw",    "ar": "حنطة"},
+    "teff":                  {"calories": 101, "state": "raw",    "ar": "تف"},
+    "kamut":                 {"calories": 110, "state": "raw",    "ar": "كاموت"},
 
     # 🌾 Grains - Cooked
     "rice (cooked)":         {"calories": 130, "state": "cooked", "ar": "أرز (مطبوخ)"},
+    "brown rice (cooked)":   {"calories": 111, "state": "cooked", "ar": "أرز بني"},
+    "basmati rice (cooked)": {"calories": 121, "state": "cooked", "ar": "أرز بسمتي"},
+    "wild rice (cooked)":    {"calories": 101, "state": "cooked", "ar": "أرز بري"},
     "oats (cooked)":         {"calories": 68,  "state": "cooked", "ar": "شوفان (مطبوخ)"},
     "quinoa (cooked)":       {"calories": 120, "state": "cooked", "ar": "كينوا (مطبوخة)"},
     "bulgur (cooked)":       {"calories": 83,  "state": "cooked", "ar": "برغل (مطبوخ)"},
     "couscous (cooked)":     {"calories": 112, "state": "cooked", "ar": "كسكسي (مطبوخ)"},
     "spaghetti (cooked)":    {"calories": 158, "state": "cooked", "ar": "سباغيتي (مطبوخة)"},
     "jareesh (cooked)":      {"calories": 95,  "state": "cooked", "ar": "جريش (مطبوخ)"},
+    "buckwheat (cooked)":    {"calories": 92,  "state": "cooked", "ar": "حنطة سوداء (مطبوخة)"},
+    "barley (cooked)":       {"calories": 123, "state": "cooked", "ar": "شعير (مطبوخ)"},
+    "amaranth (cooked)":     {"calories": 102, "state": "cooked", "ar": "قطيفة"},
+    "farro (cooked)":        {"calories": 100, "state": "cooked", "ar": "فارو"},
+    "freekeh (cooked)":      {"calories": 115, "state": "cooked", "ar": "فريكة (مطبوخة)"},
+    "soy (cooked)":          {"calories": 173, "state": "cooked", "ar": "فول الصويا (مطبوخ)"},
 
     # 🍞 Bread
     "bread (white)":         {"calories": 265, "state": "raw",    "ar": "خبز أبيض"},
@@ -140,7 +182,11 @@ foods = {
     "green olives":          {"calories": 145, "state": "raw",    "ar": "زيتون أخضر"},
 
     # 🥛 Dairy
-    "milk":                  {"calories": 61,  "state": "raw",    "ar": "حليب"},
+    "milk (full fat)":       {"calories": 61,  "state": "raw",    "ar": "حليب كامل الدسم"},
+    "milk (low fat)":        {"calories": 42,  "state": "raw",    "ar": "حليب قليل الدسم"},
+    "milk (skimmed)":        {"calories": 34,  "state": "raw",    "ar": "حليب خالي الدسم"},
+    "milk (coconut)":        {"calories": 230, "state": "raw",    "ar": "حليب جوز الهند"},
+    "yogurt (greek)":        {"calories": 59,  "state": "raw",    "ar": "زبادي يوناني"},
     "yogurt":                {"calories": 59,  "state": "raw",    "ar": "زبادي"},
     "cheese (cheddar)":      {"calories": 403, "state": "raw",    "ar": "جبنة شيدر"},
     "cheese (feta)":         {"calories": 264, "state": "raw",    "ar": "جبنة فيتا"},
