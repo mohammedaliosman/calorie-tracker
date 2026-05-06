@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import json
 import os
+import re
+import hashlib
 from datetime import date
 from data import foods
 
@@ -89,19 +91,62 @@ DATA_DIR = "users_data"
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
+EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
+
+def sanitize_username(username: str) -> str:
+    username = username.strip()
+    username = username.replace(" ", "_")
+    username = re.sub(r"[^A-Za-z0-9_\-\.]", "", username)
+    return username.lower()
+
 def get_user_file(username):
-    return f"{DATA_DIR}/{username}.json"
+    safe = sanitize_username(username)
+    return f"{DATA_DIR}/{safe}.json"
+
+def hash_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+def user_exists(username):
+    return os.path.exists(get_user_file(username))
+
+def email_in_use(email: str) -> bool:
+    if not email:
+        return False
+    email = email.strip().lower()
+    for fname in os.listdir(DATA_DIR):
+        try:
+            with open(os.path.join(DATA_DIR, fname), "r", encoding="utf-8") as f:
+                u = json.load(f)
+                if u.get("email", "").strip().lower() == email:
+                    return True
+        except Exception:
+            continue
+    return False
+
+def find_username_by_email(email: str):
+    if not email:
+        return None
+    email = email.strip().lower()
+    for fname in os.listdir(DATA_DIR):
+        try:
+            with open(os.path.join(DATA_DIR, fname), "r", encoding="utf-8") as f:
+                u = json.load(f)
+                if u.get("email", "").strip().lower() == email:
+                    return fname.replace(".json", "")
+        except Exception:
+            continue
+    return None
 
 def load_user_data(username):
     file_path = get_user_file(username)
     if os.path.exists(file_path):
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
-    return {"streak": 0, "last_date": "", "meals": [], "daily_goal": 2000}
+    return {"streak": 0, "last_date": "", "meals": [], "daily_goal": 2000, "password_hash": None, "security_answer_hash": None, "email": None}
 
 def save_user_data(username, data):
-    with open(get_user_file(username), "w") as f:
-        json.dump(data, f)
+    with open(get_user_file(username), "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 # ============================
 # الترجمة
@@ -123,7 +168,19 @@ translations = {
         "settings": "⚙️ Settings",
         "language": "🌐 Language",
         "login": "Login / Register",
-        "username": "Username"
+        "username": "Username",
+        "password": "Password",
+        "confirm_password": "Confirm Password",
+        "register": "Register",
+        "forgot_password": "Forgot Password",
+        "email": "Email",
+        "security_question": "Security question: What is your favorite color?",
+        "reset_password": "Reset Password",
+        "reset_success": "Password reset successful. Please login with your new password.",
+        "user_exists": "Username already exists. Choose another username.",
+        "email_in_use": "Email already in use. Use another email.",
+        "login_failed": "Login failed. Check username/email and password.",
+        "register_success": "Registration successful. You can now login."
     },
     "ar": {
         "title": "متتبع السعرات",
@@ -141,7 +198,19 @@ translations = {
         "settings": "⚙️ الإعدادات",
         "language": "🌐 اللغة",
         "login": "تسجيل الدخول / إنشاء حساب",
-        "username": "اسم المستخدم"
+        "username": "اسم المستخدم",
+        "password": "كلمة المرور",
+        "confirm_password": "تأكيد كلمة المرور",
+        "register": "إنشاء حساب",
+        "forgot_password": "نسيت كلمة المرور",
+        "email": "البريد الإلكتروني",
+        "security_question": "سؤال أمني: ما هو لونك المفضل؟",
+        "reset_password": "إعادة تعيين كلمة المرور",
+        "reset_success": "تم إعادة تعيين كلمة المرور. الرجاء تسجيل الدخول بالكلمة الجديدة.",
+        "user_exists": "اسم المستخدم موجود بالفعل. اختر اسمًا آخر.",
+        "email_in_use": "البريد مستخدم بالفعل. استخدم بريدًا آخر.",
+        "login_failed": "فشل تسجيل الدخول. تحقق من اسم المستخدم/البريد/كلمة المرور.",
+        "register_success": "تم إنشاء الحساب بنجاح. يمكنك الآن تسجيل الدخول."
     }
 }
 
@@ -152,6 +221,14 @@ if "lang" not in st.session_state:
     st.session_state.lang = "en"
 if "username" not in st.session_state:
     st.session_state.username = None
+if "meals" not in st.session_state:
+    st.session_state.meals = []
+if "streak" not in st.session_state:
+    st.session_state.streak = 0
+if "last_date" not in st.session_state:
+    st.session_state.last_date = ""
+if "daily_goal" not in st.session_state:
+    st.session_state.daily_goal = 2000
 
 lang = st.session_state.lang
 t = translations[lang]
@@ -161,17 +238,98 @@ t = translations[lang]
 # ============================
 if st.session_state.username is None:
     st.title("🔥 Calorie Tracker")
-    username_input = st.text_input(t["username"])
-    if st.button(t["login"]):
-        if username_input:
-            st.session_state.username = username_input
-            # تحميل بيانات المستخدم
-            data = load_user_data(username_input)
-            st.session_state.meals = data["meals"]
-            st.session_state.streak = data["streak"]
-            st.session_state.last_date = data["last_date"]
-            st.session_state.daily_goal = data["daily_goal"]
-            st.rerun()
+
+    # وضع الاختيار: تسجيل دخول / تسجيل جديد / نسيت كلمة المرور
+    mode = st.radio("", (t["login"], t["register"], t["forgot_password"]))
+
+    if mode == t["login"]:
+        username_input = st.text_input(t["username"] + " (Username or Email)")
+        password_input = st.text_input(t["password"], type="password")
+        if st.button("Submit"):
+            if username_input and password_input:
+                lookup = username_input.strip()
+                # إذا أدخل المستخدم بريدًا، حاول إيجاد اسم المستخدم المقابل
+                if "@" in lookup and not user_exists(lookup):
+                    found = find_username_by_email(lookup)
+                    if found:
+                        lookup = found
+                if user_exists(lookup):
+                    user_data = load_user_data(lookup)
+                    if user_data.get("password_hash") and user_data["password_hash"] == hash_text(password_input):
+                        st.session_state.username = lookup
+                        st.session_state.meals = user_data["meals"]
+                        st.session_state.streak = user_data["streak"]
+                        st.session_state.last_date = user_data["last_date"]
+                        st.session_state.daily_goal = user_data["daily_goal"]
+                        st.rerun()
+                    else:
+                        st.error(t["login_failed"])
+                else:
+                    st.error(t["login_failed"])
+        st.markdown("---")
+
+    elif mode == t["register"]:
+        st.subheader(t["register"])
+        new_username = st.text_input(t["username"] + " (ID)")
+        new_email = st.text_input(t["email"])
+        new_password = st.text_input(t["password"], type="password")
+        confirm_password = st.text_input(t["confirm_password"], type="password")
+        security_answer = st.text_input(t["security_question"])
+        if st.button(t["register"]):
+            if not new_username or not new_password or not confirm_password or not security_answer or not new_email:
+                st.error("Please fill all fields.")
+            elif new_password != confirm_password:
+                st.error("Passwords do not match.")
+            elif user_exists(new_username):
+                st.error(t["user_exists"])
+            elif not EMAIL_REGEX.match(new_email.strip()):
+                st.error("Invalid email format.")
+            elif email_in_use(new_email):
+                st.error(t["email_in_use"])
+            else:
+                user_data = {
+                    "streak": 0,
+                    "last_date": "",
+                    "meals": [],
+                    "daily_goal": 2000,
+                    "password_hash": hash_text(new_password),
+                    "security_answer_hash": hash_text(security_answer.strip().lower()),
+                    "email": new_email.strip().lower()
+                }
+                save_user_data(new_username, user_data)
+                st.success(t["register_success"])
+        st.markdown("---")
+
+    elif mode == t["forgot_password"]:
+        st.subheader(t["forgot_password"])
+        fp_identifier = st.text_input("Username or Email for reset")
+        fp_security = st.text_input(t["security_question"])
+        fp_new_password = st.text_input(t["reset_password"], type="password")
+        fp_confirm = st.text_input(t["confirm_password"], type="password")
+        if st.button(t["reset_password"]):
+            if not fp_identifier or not fp_security or not fp_new_password or not fp_confirm:
+                st.error("Please fill all fields.")
+            else:
+                lookup = fp_identifier.strip()
+                if "@" in lookup and not user_exists(lookup):
+                    found = find_username_by_email(lookup)
+                    if found:
+                        lookup = found
+                if not user_exists(lookup):
+                    st.error("Username not found.")
+                elif fp_new_password != fp_confirm:
+                    st.error("Passwords do not match.")
+                else:
+                    user_data = load_user_data(lookup)
+                    stored_sec_hash = user_data.get("security_answer_hash")
+                    if stored_sec_hash and stored_sec_hash == hash_text(fp_security.strip().lower()):
+                        user_data["password_hash"] = hash_text(fp_new_password)
+                        save_user_data(lookup, user_data)
+                        st.success(t["reset_success"])
+                    else:
+                        st.error("Security answer incorrect.")
+        st.markdown("---")
+
     st.stop()
 
 # ============================
@@ -215,11 +373,15 @@ with st.expander(t["settings"]):
         )
         if mobile_goal != daily_goal:
             st.session_state.daily_goal = mobile_goal
+            existing = load_user_data(st.session_state.username)
             save_user_data(st.session_state.username, {
                 "streak": st.session_state.streak,
                 "last_date": st.session_state.last_date,
                 "meals": st.session_state.meals,
-                "daily_goal": mobile_goal
+                "daily_goal": mobile_goal,
+                "password_hash": existing.get("password_hash"),
+                "security_answer_hash": existing.get("security_answer_hash"),
+                "email": existing.get("email")
             })
             st.rerun()
 
@@ -256,11 +418,15 @@ if st.button(t["add"]):
         "food": food_name,
         "calories": round(cal, 1)
     })
+    existing = load_user_data(st.session_state.username)
     save_user_data(st.session_state.username, {
         "streak": st.session_state.streak,
         "last_date": st.session_state.last_date,
         "meals": st.session_state.meals,
-        "daily_goal": st.session_state.daily_goal
+        "daily_goal": st.session_state.daily_goal,
+        "password_hash": existing.get("password_hash"),
+        "security_answer_hash": existing.get("security_answer_hash"),
+        "email": existing.get("email")
     })
     st.rerun()
 
@@ -298,11 +464,15 @@ if st.session_state.meals:
     if progress_pct >= 1.0 and st.session_state.last_date != today:
         st.session_state.streak += 1
         st.session_state.last_date = today
+        existing = load_user_data(st.session_state.username)
         save_user_data(st.session_state.username, {
             "streak": st.session_state.streak,
             "last_date": today,
             "meals": st.session_state.meals,
-            "daily_goal": st.session_state.daily_goal
+            "daily_goal": st.session_state.daily_goal,
+            "password_hash": existing.get("password_hash"),
+            "security_answer_hash": existing.get("security_answer_hash"),
+            "email": existing.get("email")
         })
         st.success(t["goal_done"])
     elif progress_pct < 1.0:
@@ -314,10 +484,14 @@ if st.session_state.meals:
 
     if st.button(t["clear"]):
         st.session_state.meals = []
+        existing = load_user_data(st.session_state.username)
         save_user_data(st.session_state.username, {
             "streak": st.session_state.streak,
             "last_date": st.session_state.last_date,
             "meals": [],
-            "daily_goal": st.session_state.daily_goal
+            "daily_goal": st.session_state.daily_goal,
+            "password_hash": existing.get("password_hash"),
+            "security_answer_hash": existing.get("security_answer_hash"),
+            "email": existing.get("email")
         })
         st.rerun()
