@@ -83,19 +83,25 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================
-# حفظ وتحميل العداد
+# إدارة المستخدمين والبيانات
 # ============================
-SAVE_FILE = "streak_data.json"
+DATA_DIR = "users_data"
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
 
-def load_streak():
-    if os.path.exists(SAVE_FILE):
-        with open(SAVE_FILE, "r") as f:
+def get_user_file(username):
+    return f"{DATA_DIR}/{username}.json"
+
+def load_user_data(username):
+    file_path = get_user_file(username)
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
             return json.load(f)
-    return {"streak": 0, "last_date": ""}
+    return {"streak": 0, "last_date": "", "meals": [], "daily_goal": 2000}
 
-def save_streak(streak, last_date):
-    with open(SAVE_FILE, "w") as f:
-        json.dump({"streak": streak, "last_date": last_date}, f)
+def save_user_data(username, data):
+    with open(get_user_file(username), "w") as f:
+        json.dump(data, f)
 
 # ============================
 # الترجمة
@@ -116,6 +122,8 @@ translations = {
         "goal_not_done": "Keep going to complete today's goal!",
         "settings": "⚙️ Settings",
         "language": "🌐 Language",
+        "login": "Login / Register",
+        "username": "Username"
     },
     "ar": {
         "title": "متتبع السعرات",
@@ -132,29 +140,44 @@ translations = {
         "goal_not_done": "استمر لإكمال هدف اليوم!",
         "settings": "⚙️ الإعدادات",
         "language": "🌐 اللغة",
+        "login": "تسجيل الدخول / إنشاء حساب",
+        "username": "اسم المستخدم"
     }
 }
 
 # ============================
-# تهيئة session_state
+# تهيئة الحالة
 # ============================
-if "meals" not in st.session_state:
-    st.session_state.meals = []
-if "goal_counted" not in st.session_state:
-    st.session_state.goal_counted = False
 if "lang" not in st.session_state:
     st.session_state.lang = "en"
-if "daily_goal" not in st.session_state:
-    st.session_state.daily_goal = 2000
-if "streak" not in st.session_state:
-    data = load_streak()
-    st.session_state.streak = data["streak"]
-    st.session_state.last_date = data["last_date"]
+if "username" not in st.session_state:
+    st.session_state.username = None
 
-# قراءة القيم
 lang = st.session_state.lang
-daily_goal = st.session_state.daily_goal
 t = translations[lang]
+
+# ============================
+# صفحة تسجيل الدخول
+# ============================
+if st.session_state.username is None:
+    st.title("🔥 Calorie Tracker")
+    username_input = st.text_input(t["username"])
+    if st.button(t["login"]):
+        if username_input:
+            st.session_state.username = username_input
+            # تحميل بيانات المستخدم
+            data = load_user_data(username_input)
+            st.session_state.meals = data["meals"]
+            st.session_state.streak = data["streak"]
+            st.session_state.last_date = data["last_date"]
+            st.session_state.daily_goal = data["daily_goal"]
+            st.rerun()
+    st.stop()
+
+# ============================
+# المنطق بعد الدخول
+# ============================
+daily_goal = st.session_state.daily_goal
 
 if lang == "ar":
     st.markdown("""
@@ -166,7 +189,7 @@ if lang == "ar":
 # ============================
 # العنوان
 # ============================
-st.title(f"🔥 {t['title']}")
+st.title(f"🔥 {t['title']} - {st.session_state.username}")
 
 # ============================
 # الإعدادات
@@ -192,6 +215,12 @@ with st.expander(t["settings"]):
         )
         if mobile_goal != daily_goal:
             st.session_state.daily_goal = mobile_goal
+            save_user_data(st.session_state.username, {
+                "streak": st.session_state.streak,
+                "last_date": st.session_state.last_date,
+                "meals": st.session_state.meals,
+                "daily_goal": mobile_goal
+            })
             st.rerun()
 
 # ============================
@@ -227,6 +256,12 @@ if st.button(t["add"]):
         "food": food_name,
         "calories": round(cal, 1)
     })
+    save_user_data(st.session_state.username, {
+        "streak": st.session_state.streak,
+        "last_date": st.session_state.last_date,
+        "meals": st.session_state.meals,
+        "daily_goal": st.session_state.daily_goal
+    })
     st.rerun()
 
 # ============================
@@ -257,13 +292,18 @@ if st.session_state.meals:
     st.progress(progress_pct)
 
     # ============================
-    # عداد الأيام - حفظ دائم
+    # حفظ التقدم
     # ============================
     today = str(date.today())
     if progress_pct >= 1.0 and st.session_state.last_date != today:
         st.session_state.streak += 1
         st.session_state.last_date = today
-        save_streak(st.session_state.streak, today)
+        save_user_data(st.session_state.username, {
+            "streak": st.session_state.streak,
+            "last_date": today,
+            "meals": st.session_state.meals,
+            "daily_goal": st.session_state.daily_goal
+        })
         st.success(t["goal_done"])
     elif progress_pct < 1.0:
         st.info(t["goal_not_done"])
@@ -274,5 +314,10 @@ if st.session_state.meals:
 
     if st.button(t["clear"]):
         st.session_state.meals = []
-        st.session_state.goal_counted = False
+        save_user_data(st.session_state.username, {
+            "streak": st.session_state.streak,
+            "last_date": st.session_state.last_date,
+            "meals": [],
+            "daily_goal": st.session_state.daily_goal
+        })
         st.rerun()
