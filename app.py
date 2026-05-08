@@ -30,15 +30,72 @@ st.markdown("""
         max-width: 100% !important;
     }
 
-    h1, h2, h3 { color: #ff0000 !important; }
+    /* ============================
+       أنيميشن
+    ============================ */
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+    @keyframes bounceIn {
+        0%   { transform: scale(0.8); opacity: 0; }
+        60%  { transform: scale(1.05); opacity: 1; }
+        100% { transform: scale(1); }
+    }
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-40px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes glow {
+        0%   { box-shadow: 0 0 5px rgba(255,0,0,0.3); }
+        50%  { box-shadow: 0 0 20px rgba(255,0,0,0.8); }
+        100% { box-shadow: 0 0 5px rgba(255,0,0,0.3); }
+    }
+
+    /* ============================
+       تطبيق الأنيميشن
+    ============================ */
+    h1 {
+        color: #ff0000 !important;
+        animation: fadeInDown 0.8s ease forwards;
+    }
+    h2, h3 {
+        color: #ff0000 !important;
+        animation: fadeInDown 0.6s ease forwards;
+    }
+    .main .block-container > div {
+        animation: fadeInUp 0.7s ease forwards;
+    }
+
     .stButton > button {
         background-color: #ff0000 !important;
         color: white !important;
         border: none;
         font-weight: bold;
         width: 100%;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease !important;
+        animation: fadeInUp 0.5s ease forwards;
     }
-    .stProgress > div > div > div { transition: background-color 0.5s ease; }
+    .stButton > button:hover {
+        transform: scale(1.04) !important;
+        box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4) !important;
+        background-color: #cc0000 !important;
+    }
+    .stButton > button:active {
+        transform: scale(0.97) !important;
+    }
+
+    .stProgress > div > div > div {
+        transition: background-color 0.5s ease, width 0.8s ease !important;
+    }
 
     .streak-card {
         background: linear-gradient(135deg, #ff0000, #ff6b6b);
@@ -49,8 +106,47 @@ st.markdown("""
         font-size: 1.2rem;
         font-weight: bold;
         margin: 10px 0;
+        animation: bounceIn 0.8s ease forwards, glow 3s ease-in-out infinite;
+        transition: transform 0.3s ease;
+    }
+    .streak-card:hover {
+        transform: scale(1.02);
     }
 
+    .stSelectbox > div,
+    .stNumberInput > div,
+    .stTextInput > div {
+        transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+        animation: fadeIn 0.6s ease forwards;
+    }
+    .stSelectbox > div:focus-within,
+    .stNumberInput > div:focus-within,
+    .stTextInput > div:focus-within {
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.3) !important;
+    }
+
+    table {
+        animation: slideInLeft 0.6s ease forwards;
+    }
+
+    .stSuccess, .stInfo, .stError {
+        animation: fadeInDown 0.5s ease forwards;
+    }
+
+    .streamlit-expanderHeader {
+        transition: background-color 0.3s ease !important;
+    }
+    .streamlit-expanderHeader:hover {
+        background-color: rgba(255,0,0,0.1) !important;
+    }
+
+    .stRadio > div {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    /* ============================
+       الجوال
+    ============================ */
     @media (max-width: 768px) {
         .main .block-container {
             padding-left: 1rem !important;
@@ -142,7 +238,15 @@ def load_user_data(username):
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
-    return {"streak": 0, "last_date": "", "meals": [], "daily_goal": 2000, "password_hash": None, "security_answer_hash": None, "email": None}
+    return {
+        "streak": 0,
+        "last_date": "",
+        "meals": [],
+        "daily_goal": 2000,
+        "password_hash": None,
+        "security_answer_hash": None,
+        "email": None
+    }
 
 def save_user_data(username, data):
     with open(get_user_file(username), "w", encoding="utf-8") as f:
@@ -239,7 +343,6 @@ t = translations[lang]
 if st.session_state.username is None:
     st.title("🔥 Calorie Tracker")
 
-    # وضع الاختيار: تسجيل دخول / تسجيل جديد / نسيت كلمة المرور
     mode = st.radio("", (t["login"], t["register"], t["forgot_password"]))
 
     if mode == t["login"]:
@@ -248,7 +351,6 @@ if st.session_state.username is None:
         if st.button("Submit"):
             if username_input and password_input:
                 lookup = username_input.strip()
-                # إذا أدخل المستخدم بريدًا، حاول إيجاد اسم المستخدم المقابل
                 if "@" in lookup and not user_exists(lookup):
                     found = find_username_by_email(lookup)
                     if found:
@@ -457,9 +559,6 @@ if st.session_state.meals:
     """, unsafe_allow_html=True)
     st.progress(progress_pct)
 
-    # ============================
-    # حفظ التقدم
-    # ============================
     today = str(date.today())
     if progress_pct >= 1.0 and st.session_state.last_date != today:
         st.session_state.streak += 1
